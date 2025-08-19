@@ -1,4 +1,4 @@
-# Домашнее задание к занятию "`Название занятия`" - `Фамилия и имя студента`
+# Домашнее задание к занятию "`Название занятия`" - `Kadancev Vladimir`
 
 
 ### Инструкция по выполнению домашнего задания
@@ -24,94 +24,199 @@
 
 ### Задание 1
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
-Поле для вставки кода...
-....
-....
-....
-....
-```
-
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
-
-
----
+Docker Compose — это инструмент для управления много-контейнерными приложениями, который позволяет описать их конфигурацию в одном YAML-файле и запускать одной командой, упрощая настройку связей между сервисами, такими как веб-сервер и база данных. Он может улучшить мою жизнь, так как экономит время на настройке окружений для учёбы и проектов, автоматизируя запуск сложных приложений, что особенно полезно при изучении Docker и DevOps, позволяя сосредоточиться на задачах, а не на ручной конфигурации.
 
 ### Задание 2
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
-Поле для вставки кода...
-....
-....
-....
-....
-```
-
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
-
-
----
+version: '3.8'
+services: {}
+volumes: {}
+networks:
+  KadancevV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 
 ### Задание 3
 
-`Приведите ответ в свободной форме........`
+Создана конфигурация docker-composeдля Prometheus с именем контейнераLugininaV-netology-prometheus. Добавлены тома для данных (prometheus-data) и конфигурации (prometheus.yml), обеспечен внешний доступ к порту 9090.
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: 'pushgateway'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['pushgateway:9091']
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
-Поле для вставки кода...
-....
-....
-....
-....
-```
-
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: KadancevV-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - KadancevV-my-netology-hw
+volumes:
+  prometheus-data:
+networks:
+  KadancevV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 
 ### Задание 4
 
-`Приведите ответ в свободной форме........`
+Создана конфигурация docker-composeдля Pushgateway с именем контейнераKadancevV-netology-pushgateway. Обеспечен внешний доступ к порту 9091.
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: KadancevV-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - KadancevV-my-netology-hw
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: KadancevV-netology-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - KadancevV-my-netology-hw
+volumes:
+  prometheus-data:
+networks:
+  KadancevV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+### Задание 5
 
-```
-Поле для вставки кода...
-....
-....
-....
-....
-```
+Создана конфигурация docker-compose для Grafana с именем контейнера KadancevV-netology-grafana. Добавлены тома для данных (grafana-data) и конфигурации (custom.ini), настроена переменная окружения для пути к конфигурации. В custom.ini указаны логин LugininaV и пароль netology. Обеспечен внешний доступ к порту 3000 через порт 80.
+[auth]
+disable_login_form = false
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
+[auth.basic]
+enabled = true
+
+[auth.anonymous]
+enabled = false
+
+[security]
+admin_user = KadancevV
+admin_password = netology
+
+version: '3.8'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: KadancevV-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - KadancevV-my-netology-hw
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: KadancevV-netology-pushgateway
+    ports:
+      - "9091:9091"
+    networks:
+      - KadancevV-my-netology-hw
+  grafana:
+    image: grafana/grafana:latest
+    container_name: KadancevV-netology-grafana
+    ports:
+      - "80:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./custom.ini:/etc/grafana/grafana.ini
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    networks:
+      - KadancevV-my-netology-hw
+volumes:
+  prometheus-data:
+  grafana-data:
+networks:
+  KadancevV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+
+### Задание 6
+
+Настроена поочередность запуска контейнеров: Pushgateway → Prometheus → Grafana. Добавлены режимы перезапуска alwaysдля всех контейнеров. Все контейнеры используют сетьKadancevV-my-netology-hw. Сценарий запущен в detached-режиме с помощью docker compose up -d.
+
+### Задание 7
+
+Выполнен запрос для помещения метрики KadancevV со значением 5 в Pushgateway. В Grafana выполнен вход с логином KadancevV и паролем netology. Создан Data Source Prometheus с URL http://prometheus:9090. Построен график на основе метрики KadancevV.
+
+version: '3.8'
+services:
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: KadancevV-netology-pushgateway
+    ports:
+      - "9091:9091"
+    restart: always
+    networks:
+      - KadancevV-my-netology-hw
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: KadancevV-netology-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+    depends_on:
+      - pushgateway
+    networks:
+      - KadancevV-my-netology-hw
+  grafana:
+    image: grafana/grafana:latest
+    container_name: KadancevV-netology-grafana
+    ports:
+      - "80:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./custom.ini:/etc/grafana/grafana.ini
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    restart: always
+    depends_on:
+      - prometheus
+    networks:
+      - KadancevV-my-netology-hw
+volumes:
+  prometheus-data:
+  grafana-data:
+networks:
+  LugininaV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+
+
+
