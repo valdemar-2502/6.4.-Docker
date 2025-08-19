@@ -316,7 +316,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - alertmanager-data:/alertmanager
+      - alertmanager-data:/data
       - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
     restart: always
     depends_on:
