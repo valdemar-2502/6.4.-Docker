@@ -251,7 +251,7 @@ networks:
 
 ![Скриншот команды docker ps](https://github.com/victorialugi/docker2-homework/blob/main/task7_docker_ps.png)
 
-![Скриншот графика LugininaV](https://github.com/victorialugi/docker2-homework/blob/main/task7_grafana.png)
+![Скриншот графика KadancevV](https://github.com/victorialugi/docker2-homework/blob/main/task7_grafana.png)
 
 ---
 
@@ -265,7 +265,7 @@ networks:
 
 ### Задание 9
 
-Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `LugininaV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовала `docker stop LugininaV-netology-prometheus`.
+Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовала `docker stop KadancevV-netology-prometheus`.
 
 ![Скриншот работы Alertmanager](https://github.com/victorialugi/docker2-homework/blob/main/task9_alertmanager.png)
 
@@ -274,15 +274,15 @@ version: '3.8'
 services:
   pushgateway:
     image: prom/pushgateway:latest
-    container_name: LugininaV-netology-pushgateway
+    container_name: KadancevV-netology-pushgateway
     ports:
       - "9091:9091"
     restart: always
     networks:
-      - LugininaV-my-netology-hw
+      - KadancevV-my-netology-hw
   prometheus:
     image: prom/prometheus:latest
-    container_name: LugininaV-netology-prometheus
+    container_name: KadancevV-netology-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -293,10 +293,10 @@ services:
     depends_on:
       - pushgateway
     networks:
-      - LugininaV-my-netology-hw
+      - KadancevV-my-netology-hw
   grafana:
     image: grafana/grafana:latest
-    container_name: LugininaV-netology-grafana
+    container_name: KadancevV-netology-grafana
     ports:
       - "80:3000"
     volumes:
@@ -308,10 +308,10 @@ services:
     depends_on:
       - prometheus
     networks:
-      - LugininaV-my-netology-hw
+      - KadancevV-my-netology-hw
   alertmanager:
     image: prom/alertmanager:latest
-    container_name: LugininaV-netology-alertmanager
+    container_name: KadancevV-netology-alertmanager
     ports:
       - "9093:9093"
     volumes:
@@ -321,13 +321,13 @@ services:
     depends_on:
       - prometheus
     networks:
-      - LugininaV-my-netology-hw
+      - KadancevV-my-netology-hw
 volumes:
   prometheus-data:
   grafana-data:
   alertmanager-data:
 networks:
-  LugininaV-my-netology-hw:
+  KadancevV-my-netology-hw:
     driver: bridge
     ipam:
       config:
