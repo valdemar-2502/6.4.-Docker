@@ -250,7 +250,8 @@ networks:
 ```
 
 ![Скриншот команды docker ps](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps1.png)
-![Скриншот команды docker ps2](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps1.png)
+![Скриншот команды docker ps2](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps2.png)
+![Скриншот команды docker ps3](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps2.png)
 ![Скриншот графика KadancevV](https://github.com/victorialugi/docker2-homework/blob/main/task7_grafana.png)
 
 ---
