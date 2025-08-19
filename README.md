@@ -265,7 +265,7 @@ networks:
 
 ### Задание 9
 
-Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовала `docker stop KadancevV-netology-prometheus`.
+Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовал команду `docker stop KadancevV-netology-prometheus`.
 
 ![Скриншот работы Alertmanager](https://github.com/victorialugi/docker2-homework/blob/main/task9_alertmanager.png)
 
