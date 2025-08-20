@@ -16,6 +16,7 @@ services:
     volumes:
       - prometheus-data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./rules.yml:/etc/prometheus/rules.yml
     restart: always
     depends_on:
       - pushgateway
@@ -36,9 +37,23 @@ services:
       - prometheus
     networks:
       - KadancevV-my-netology-hw
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: KadancevV-netology-alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - alertmanager-data:/data
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    restart: always
+    depends_on:
+      - prometheus
+    networks:
+      - KadancevV-my-netology-hw
 volumes:
   prometheus-data:
   grafana-data:
+  alertmanager-data:
 networks:
   KadancevV-my-netology-hw:
     driver: bridge
