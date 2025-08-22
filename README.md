@@ -270,8 +270,20 @@ networks:
 
 ![Скриншот работы Alertmanager](https://github.com/victorialugi/docker2-homework/blob/main/task9_alertmanager.png)
 
-```yaml
-version: '3.8'
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+  alertmanager_data: {}
+
+networks:
+  KadancevV-my-netology-hw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+  monitoring:
+    driver: bridge
+
 services:
   pushgateway:
     image: prom/pushgateway:latest
@@ -281,55 +293,66 @@ services:
     restart: always
     networks:
       - KadancevV-my-netology-hw
+
   prometheus:
     image: prom/prometheus:latest
     container_name: KadancevV-netology-prometheus
-    ports:
-      - "9090:9090"
     volumes:
-      - prometheus-data:/prometheus
+      - prometheus_data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./rules.yml:/etc/prometheus/rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - 9090:9090
     restart: always
     depends_on:
       - pushgateway
     networks:
       - KadancevV-my-netology-hw
+
   grafana:
     image: grafana/grafana:latest
     container_name: KadancevV-netology-grafana
-    ports:
-      - "80:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./custom.ini:/etc/grafana/grafana.ini
-    environment:
-      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
-    restart: always
     depends_on:
       - prometheus
+    ports:
+      - 80:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./custom.ini:/etc/grafana/custom.ini
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/custom.ini
     networks:
       - KadancevV-my-netology-hw
+    restart: always
+
   alertmanager:
     image: prom/alertmanager:latest
     container_name: KadancevV-netology-alertmanager
     ports:
       - "9093:9093"
     volumes:
-      - alertmanager-data:/data
-      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager_data:/data
+      - ./alertmanager.yml:/home/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/home/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     restart: always
     depends_on:
       - prometheus
     networks:
       - KadancevV-my-netology-hw
-volumes:
-  prometheus-data:
-  grafana-data:
-  alertmanager-data:
-networks:
-  KadancevV-my-netology-hw:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring
+     
