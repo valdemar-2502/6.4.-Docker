@@ -251,7 +251,7 @@ docker-compose.yml целиком;
 
 
 
-![Скриншот удаления контейнеров](https://github.com/victorialugi/docker2-homework/blob/main/task8_containers_removed.png)
+![Скриншот удаления контейнеров](https://github.com/valdemar-2502/Docker-Homework/blob/main/deleting%20all%20containers.png)
 
 ---
 
