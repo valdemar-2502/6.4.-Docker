@@ -166,6 +166,8 @@ disable_signout_menu = false
 [log]
 mode = console
 level = info
+
+
 ```
 
 
@@ -187,7 +189,8 @@ level = info
     depends_on:
       - prometheus
 ```
-
+![Скриншот команды grafana](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana.png)
+![Скриншот команды grafana2](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana2.png)
 ---
 
 ### Задание 6
@@ -200,12 +203,27 @@ level = info
 Запустите сценарий в detached режиме.`
 
 ![Скриншот команды docker ps](https://github.com/valdemar-2502/Docker-Homework/blob/main/docker_ps.png)
+![Скриншот команды docker ps2](https://github.com/valdemar-2502/Docker-Homework/blob/main/docker_ps2.png)
 
 ---
 
 ### Задание 7
 
-Выполнен запрос для помещения метрики `KadancevV` со значением 5 в Pushgateway. В Grafana выполнен вход с логином `KadancevV` и паролем `netology`. Создан Data Source Prometheus с URL `http://prometheus:9090`. Построен график на основе метрики `KadancevV`.
+Выполните действия.
+
+Выполните запрос в Pushgateway для помещения метрики <ваши фамилия и инициалы> со значением 5 в Prometheus: echo "<ваши фамилия и инициалы> 5" | curl --data-binary @- http://localhost:9091/metrics/job/netology.
+Залогиньтесь в Grafana с помощью логина и пароля из предыдущего задания.
+Cоздайте Data Source Prometheus (Home -> Connections -> Data sources -> Add data source -> Prometheus -> указать "Prometheus server URL = http://prometheus:9090" -> Save & Test).
+Создайте график на основе добавленной в пункте 5 метрики (Build a dashboard -> Add visualization -> Prometheus -> Select metric -> Metric explorer -> <ваши фамилия и инициалы -> Apply.
+В качестве решения приложите:
+
+docker-compose.yml целиком;
+скриншот команды docker ps после запуске docker-compose.yml;
+скриншот графика, постоенного на основе вашей метрики.
+
+![Скриншот команды pushgateway](https://github.com/valdemar-2502/Docker-Homework/blob/main/pushgateway.png)
+
+---
 
 ```pushgateway:
     image: prom/pushgateway:latest
@@ -224,21 +242,22 @@ level = info
 ---
 
 ### Задание 8
+---
+Задание 8
+Выполните действия:
 
-Остановлены и удалены все контейнеры одной командой: `docker container rm -f $(docker container ls -aq)`.
+Остановите и удалите все контейнеры одной командой.
+В качестве решения приложите скриншот консоли с проделанными действиями.
+
+
 
 ![Скриншот удаления контейнеров](https://github.com/victorialugi/docker2-homework/blob/main/task8_containers_removed.png)
 
 ---
 
+docker-compose целиком
+
 ---
-
-### Задание 9
-
-Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовал `docker stop KadancevV-netology-prometheus`.
-
-![Скриншот работы Alertmanager](https://github.com/victorialugi/docker2-homework/blob/main/task9_alertmanager.png)
-
 ```route:
   group_by: ['alertname']
   group_wait: 30s
