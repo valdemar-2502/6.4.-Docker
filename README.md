@@ -198,9 +198,10 @@ level = info
 Настройте режимы перезапуска для контейнеров.
 Настройте использование контейнерами одной сети.
 Запустите сценарий в detached режиме.`
-```
-![Скриншот команды docker ps](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps1.png)
-```
+
+![Скриншот команды docker ps](https://github.com/victorialugi/docker2-homework/blob/main/task7_docker_ps.png)
+
+---
 
 ### Задание 7
 
@@ -218,9 +219,7 @@ level = info
 ```
 
 
-![Скриншот команды docker ps2](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps2.png)
-![Скриншот команды docker ps3](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps3.png)
-![Скриншот графика KadancevV](https://github.com/victorialugi/docker2-homework/blob/main/task7_grafana.png)
+
 
 ---
 
