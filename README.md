@@ -199,7 +199,7 @@ level = info
 Настройте использование контейнерами одной сети.
 Запустите сценарий в detached режиме.`
 
-![Скриншот команды docker ps](https://github.com/victorialugi/docker2-homework/blob/main/task7_docker_ps.png)
+![Скриншот команды docker ps](https://github.com/valdemar-2502/Docker-Homework/blob/main/docker_ps.png)
 
 ---
 
