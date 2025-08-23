@@ -49,41 +49,46 @@ networks:
 `Создана конфигурация `docker-compose` для Prometheus с именем контейнера `KadancevV-netology-prometheus`. Добавлены тома для данных (`prometheus-data`) и конфигурации (`prometheus.yml`), обеспечен внешний доступ к порту `9090`.`
 
 
-```yaml
-global:
+```global:
   scrape_interval: 15s
+  evaluation_interval: 15s
+
 scrape_configs:
   - job_name: 'prometheus'
-    scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
   - job_name: 'pushgateway'
-    scrape_interval: 5s
+    honor_labels: true
     static_configs:
       - targets: ['pushgateway:9091']
 ```
 
-```yaml
-version: '3.8'
-services:
-  prometheus:
+```prometheus:
     image: prom/prometheus:latest
     container_name: KadancevV-netology-prometheus
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.30
+    restart: unless-stopped
     ports:
       - "9090:9090"
     volumes:
-      - prometheus-data:/prometheus
+      - prometheus_data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - KadancevV-my-netology-hw
-volumes:
-  prometheus-data:
-networks:
-  KadancevV-my-netology-hw:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - node-exporter
+      - pushgateway
 ```
 
 ---
@@ -92,34 +97,15 @@ networks:
 
 `Создана конфигурация `docker-compose` для Pushgateway с именем контейнера `KadancevV-netology-pushgateway`. Обеспечен внешний доступ к порту `9091`.`
 
-```yaml
-version: '3.8'
-services:
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: KadancevV-netology-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - KadancevV-my-netology-hw
-  pushgateway:
+```pushgateway:
     image: prom/pushgateway:latest
     container_name: KadancevV-netology-pushgateway
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.20
+    restart: unless-stopped
     ports:
       - "9091:9091"
-    networks:
-      - KadancevV-my-netology-hw
-volumes:
-  prometheus-data:
-networks:
-  KadancevV-my-netology-hw:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
 ```
 
 ---
@@ -128,11 +114,7 @@ networks:
 
 Создана конфигурация `docker-compose` для Grafana с именем контейнера `KadancevV-netology-grafana`. Добавлены тома для данных (`grafana-data`) и конфигурации (`custom.ini`), настроена переменная окружения для пути к конфигурации. В `custom.ini` указаны логин `KadancevV` и пароль `netology`. Обеспечен внешний доступ к порту `3000` через порт `80`.
 
-```ini
-[auth]
-disable_login_form = false
-
-[auth.basic]
+```[auth.basic]
 enabled = true
 
 [auth.anonymous]
@@ -141,50 +123,48 @@ enabled = false
 [security]
 admin_user = KadancevV
 admin_password = netology
+
+[server]
+http_port = 3000
+domain = 51.250.76.237
+root_url = http://51.250.76.237:3000/
+serve_from_sub_path = false
+
+[database]
+log_queries = 
+
+[users]
+allow_sign_up = false
+auto_assign_org = true
+auto_assign_org_role = Viewer
+
+[auth]
+disable_login_form = false
+disable_signout_menu = false
+
+[log]
+mode = console
+level = info
 ```
 
 
-```yaml
-version: '3.8'
-services:
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: KadancevV-netology-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - KadancevV-my-netology-hw
-  pushgateway:
-    image: prom/pushgateway:latest
-    container_name: KadancevV-netology-pushgateway
-    ports:
-      - "9091:9091"
-    networks:
-      - KadancevV-my-netology-hw
-  grafana:
+```grafana:
     image: grafana/grafana:latest
     container_name: KadancevV-netology-grafana
-    ports:
-      - "80:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./custom.ini:/etc/grafana/grafana.ini
-    environment:
-      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
     networks:
-      - KadancevV-my-netology-hw
-volumes:
-  prometheus-data:
-  grafana-data:
-networks:
-  KadancevV-my-netology-hw:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.50
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "80:3000"
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/custom.ini
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./custom.ini:/etc/grafana/custom.ini
+    depends_on:
+      - prometheus
 ```
 
 ---
@@ -199,54 +179,15 @@ networks:
 
 Выполнен запрос для помещения метрики `KadancevV` со значением 5 в Pushgateway. В Grafana выполнен вход с логином `KadancevV` и паролем `netology`. Создан Data Source Prometheus с URL `http://prometheus:9090`. Построен график на основе метрики `KadancevV`.
 
-```yaml
-version: '3.8'
-services:
-  pushgateway:
+```pushgateway:
     image: prom/pushgateway:latest
     container_name: KadancevV-netology-pushgateway
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.20
+    restart: unless-stopped
     ports:
       - "9091:9091"
-    restart: always
-    networks:
-      - KadancevV-my-netology-hw
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: KadancevV-netology-prometheus
-    ports:
-      - "9090:9090"
-    volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    restart: always
-    depends_on:
-      - pushgateway
-    networks:
-      - KadancevV-my-netology-hw
-  grafana:
-    image: grafana/grafana:latest
-    container_name: KadancevV-netology-grafana
-    ports:
-      - "80:3000"
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./custom.ini:/etc/grafana/grafana.ini
-    environment:
-      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
-    restart: always
-    depends_on:
-      - prometheus
-    networks:
-      - KadancevV-my-netology-hw
-volumes:
-  prometheus-data:
-  grafana-data:
-networks:
-  KadancevV-my-netology-hw:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
 ```
 
 ![Скриншот команды docker ps](https://github.com/valdemar-2502/6.4.-Docker/blob/main/docker_ps1.png)
@@ -264,15 +205,34 @@ networks:
 
 ---
 
+---
+
 ### Задание 9
 
-Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовал команду `docker stop KadancevV-netology-prometheus`.
+Создана конфигурация `docker-compose` для Alertmanager с именем контейнера `KadancevV-netology-alertmanager`. Настроены тома, сеть, режим перезапуска и очередность запуска. Обновлена конфигурация Prometheus для интеграции с Alertmanager, добавлены правила для генерации алерта. Для теста использовал `docker stop KadancevV-netology-prometheus`.
 
 ![Скриншот работы Alertmanager](https://github.com/victorialugi/docker2-homework/blob/main/task9_alertmanager.png)
-volumes:
-  prometheus_data: {}
-  grafana_data: {}
-  alertmanager_data: {}
+
+```route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: 'web.hook'
+
+receivers:
+  - name: 'web.hook'
+    webhook_configs:
+      - url: 'http://127.0.0.1:5001/'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+```
+```version: '3.8'
 
 networks:
   KadancevV-my-netology-hw:
@@ -280,78 +240,84 @@ networks:
     ipam:
       config:
         - subnet: 10.5.0.0/16
-  monitoring:
-    driver: bridge
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
 
 services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.10
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+
   pushgateway:
     image: prom/pushgateway:latest
     container_name: KadancevV-netology-pushgateway
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.20
+    restart: unless-stopped
     ports:
       - "9091:9091"
-    restart: always
-    networks:
-      - KadancevV-my-netology-hw
 
   prometheus:
     image: prom/prometheus:latest
     container_name: KadancevV-netology-prometheus
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.30
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
     volumes:
       - prometheus_data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./rules.yml:/etc/prometheus/rules.yml
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - 9090:9090
-    restart: always
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
     depends_on:
+      - node-exporter
       - pushgateway
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
     networks:
-      - KadancevV-my-netology-hw
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.40
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    depends_on:
+      - prometheus
 
   grafana:
     image: grafana/grafana:latest
     container_name: KadancevV-netology-grafana
-    depends_on:
-      - prometheus
+    networks:
+      KadancevV-my-netology-hw:
+        ipv4_address: 10.5.0.50
+    restart: unless-stopped
     ports:
-      - 80:3000
+      - "3000:3000"
+      - "80:3000"
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/custom.ini
     volumes:
       - grafana_data:/var/lib/grafana
       - ./custom.ini:/etc/grafana/custom.ini
-    environment:
-      - GF_PATHS_CONFIG=/etc/grafana/custom.ini
-    networks:
-      - KadancevV-my-netology-hw
-    restart: always
-
-  alertmanager:
-    image: prom/alertmanager:latest
-    container_name: KadancevV-netology-alertmanager
-    ports:
-      - "9093:9093"
-    volumes:
-      - alertmanager_data:/data
-      - ./alertmanager.yml:/home/alertmanager/alertmanager.yml
-    command:
-      - '--config.file=/home/alertmanager/alertmanager.yml'
-      - '--storage.path=/alertmanager'
-    restart: always
     depends_on:
       - prometheus
-    networks:
-      - KadancevV-my-netology-hw
+```
 
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: unless-stopped
-    ports:
-      - "9100:9100"
-    networks:
-      - monitoring
-     
