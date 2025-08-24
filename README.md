@@ -200,11 +200,6 @@ level = info
       - prometheus
 ```
 ---
-![Скриншот команды grafana](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana.png)
-![Скриншот команды grafana2](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana2.png)
-
----
----
 ### Задание 6
 
 Выполните действия.
@@ -238,6 +233,9 @@ docker-compose.yml целиком;
 ---
 ---
 ![Скриншот команды pushgateway](https://github.com/valdemar-2502/Docker-Homework/blob/main/pushgateway.png)
+![Скриншот команды grafana](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana.png)
+![Скриншот команды grafana2](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana2.png)
+![Скриншот команды grafana3](https://github.com/valdemar-2502/Docker-Homework/blob/main/grafana3.png)
 
 ---
 
